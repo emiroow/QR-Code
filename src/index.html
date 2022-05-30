@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRCode سازنده </title>
+</head>
+<link rel="stylesheet" href="/dist/output.css">
+<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+<style>
+    [x-cloak] {
+        display: none;
+    }
+</style>
+
+<body class="bg-jacarta">
+    <div class="h-fulll w-full  flex relative ">
+        <div class="w-7/12 rounded-xl flex flex-wrap m-auto border-2 drop-shadow-2xl bg-jacartaNo p-3">
+
+            <div class="w-4/12  rounded-xl mt-8 ">
+                <div class="flex flex-row justify-center items-center">
+                    <div class="flex items-center text-center justify-center" id="qrcode">
+                        <span class="text-white text-sm text-right font-semibold leading-8 p-0 mx-1 -mt-8">
+                            <span class="underline">: راهنما</span>  </br>
+                            . جهت تولید کیو آر کد خود فیلد های سمت راست رو پر کنید </br>
+                            . محتوا : لینک یا متن مورد نظر خود را وارد کنید</br>
+                            . طول / عرض : اندازه موردنظر خود را وارد کنید</br>
+                            . نام فایل دانلودی : نام فایل کیو آر کد خود را وارد کنید</br>
+                            . رنگ پس زمنیه : رنگ پس زمینه کیو آر کد را وارد کنید</br>
+                            . رنگ بیت : رنگ بیت کیو آر کد را وارد کنید</br>
+                            . دکمه تولید : ایجاد کیو آر کد خود</br>
+                            دکمه تازه سازی : تازه سازی کیو آر کد جهت ایجاد کیو آر کد جدید</br>
+                            پس از ایجاد کیو آر کد خود می‌توانید با دکمه دانلود کیو آر کد خود را دریافت کنید ( نام فایل دانلودی</br>
+                            ( را در سمت راست مشخص نمایید 
+                        </span>
+                    </div>
+                </div>
+                <div class="hidden downloadbtn flex flex-row justify-center  items-center mt-5 mb-3">
+                    <a download="QRcode.png" id="download" href=""
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                        <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" /></svg>
+                        <span>دانلود</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="w-8/12  border-l-2 flex flex-col justify-center items-center   ">
+
+                <div class="flex flex-row w-full space-x-4 justify-center mt-8">
+                    <input id="content" class=" w-96 h-11 text-center rounded-md" placeholder="محتوا " type="text">
+                </div>
+                <div class="flex flex-row w-full items-center space-x-4 justify-center mt-2">
+                    <span class="text-white text-md">طول</span>
+                    <input id="width" class=" w-40 h-11 text-center rounded-md" placeholder="طول " value="250"
+                        type="number" min="0" max="20" maxlength="3" >
+                    <span class="text-white text-2xl">*</span>
+                    <input id="height" class=" w-40 h-11 text-center rounded-md" placeholder="عرض " value="250"
+                        type="number">
+                    <span class="text-white text-md">عرض</span>
+                </div>
+                <div class="flex flex-row w-full space-x-4 justify-center mt-2">
+                    <input id="downloadname" class=" w-5/12 h-11 text-center rounded-md" placeholder="نام فایل دانلودی "
+                        type="text">
+                </div>
+                <div class="flex flex-row w-full items-center space-x-4 justify-center mt-2">
+                    <div x-data="app()" x-cloak>
+                        <div class="">
+                            <div class="flex justify-center items-center">
+                                <div>
+                                    <input id="colorSelected" type="text" placeholder="Pick a color"
+                                        class="border border-transparent shadow px-4 py-2 leading-normal text-gray-700 bg-white rounded-md focus:outline-none focus:shadow-outline"
+                                        readonly x-model="colorSelected">
+                                </div>
+                                <div class="relative ml-2 mt-1">
+                                    <button type="button" @click="isOpen = !isOpen"
+                                        class="w-10 h-10 rounded-full focus:outline-none focus:shadow-outline inline-flex p-2 shadow"
+                                        :style="`background: ${colorSelected}; color: white`">
+                                        <svg class="w-6 h-6 fill-current text-black" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24">
+                                            <path fill="none"
+                                                d="M15.584 10.001L13.998 8.417 5.903 16.512 5.374 18.626 7.488 18.097z" />
+                                            <path
+                                                d="M4.03,15.758l-1,4c-0.086,0.341,0.015,0.701,0.263,0.949C3.482,20.896,3.738,21,4,21c0.081,0,0.162-0.01,0.242-0.03l4-1 c0.176-0.044,0.337-0.135,0.465-0.263l8.292-8.292l1.294,1.292l1.414-1.414l-1.294-1.292L21,7.414 c0.378-0.378,0.586-0.88,0.586-1.414S21.378,4.964,21,4.586L19.414,3c-0.756-0.756-2.072-0.756-2.828,0l-2.589,2.589l-1.298-1.296 l-1.414,1.414l1.298,1.296l-8.29,8.29C4.165,15.421,4.074,15.582,4.03,15.758z M5.903,16.512l8.095-8.095l1.586,1.584 l-8.096,8.096l-2.114,0.529L5.903,16.512z" />
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="isOpen" @click.away="isOpen = false"
+                                        x-transition:enter="transition ease-out duration-100 transform"
+                                        x-transition:enter-start="opacity-0 scale-95"
+                                        x-transition:enter-end="opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-75 transform"
+                                        x-transition:leave-start="opacity-100 scale-100"
+                                        x-transition:leave-end="opacity-0 scale-95"
+                                        class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg">
+                                        <div class="rounded-md bg-white shadow-xs px-4 py-3">
+                                            <div class="flex flex-wrap -mx-2">
+                                                <template x-for="(color, index) in colors" :key="index">
+                                                    <div class="px-2">
+                                                        <template x-if="colorSelected === color">
+                                                            <div class="w-8 h-8 inline-flex rounded-full cursor-pointer border-4 border-white"
+                                                                :style="`background: ${color}; box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);`">
+                                                            </div>
+                                                        </template>
+
+                                                        <template x-if="colorSelected != color">
+                                                            <div @click="colorSelected = color"
+                                                                @keydown.enter="colorSelected = color" role="checkbox"
+                                                                tabindex="0" :aria-checked="colorSelected"
+                                                                class="w-8 h-8 inline-flex rounded-full cursor-pointer border-4 border-white focus:outline-none focus:shadow-outline"
+                                                                :style="`background: ${color};`"></div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="text-white text-md">رنگ پس زمینه</span>
+
+                </div>
+                <div class="flex flex-row w-full items-center space-x-4 justify-center mt-2">
+                    <div x-data="app2()" x-cloak>
+                        <div class="">
+                            <div class="flex justify-center items-center">
+                                <div>
+                                    <input id="colorSelectedbit" type="text" placeholder="Pick a color"
+                                        class="border border-transparent shadow px-4 py-2 leading-normal text-gray-700 bg-white rounded-md focus:outline-none focus:shadow-outline"
+                                        readonly x-model="colorSelected">
+                                </div>
+                                <div class="relative ml-2 mt-1">
+                                    <button type="button" @click="isOpen = !isOpen"
+                                        class="w-10 h-10 rounded-full focus:outline-none focus:shadow-outline inline-flex p-2 shadow"
+                                        :style="`background: ${colorSelected}; color: white`">
+                                        <svg class="w-6 h-6 fill-current text-white" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24">
+                                            <path fill="none"
+                                                d="M15.584 10.001L13.998 8.417 5.903 16.512 5.374 18.626 7.488 18.097z" />
+                                            <path
+                                                d="M4.03,15.758l-1,4c-0.086,0.341,0.015,0.701,0.263,0.949C3.482,20.896,3.738,21,4,21c0.081,0,0.162-0.01,0.242-0.03l4-1 c0.176-0.044,0.337-0.135,0.465-0.263l8.292-8.292l1.294,1.292l1.414-1.414l-1.294-1.292L21,7.414 c0.378-0.378,0.586-0.88,0.586-1.414S21.378,4.964,21,4.586L19.414,3c-0.756-0.756-2.072-0.756-2.828,0l-2.589,2.589l-1.298-1.296 l-1.414,1.414l1.298,1.296l-8.29,8.29C4.165,15.421,4.074,15.582,4.03,15.758z M5.903,16.512l8.095-8.095l1.586,1.584 l-8.096,8.096l-2.114,0.529L5.903,16.512z" />
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="isOpen" @click.away="isOpen = false"
+                                        x-transition:enter="transition ease-out duration-100 transform"
+                                        x-transition:enter-start="opacity-0 scale-95"
+                                        x-transition:enter-end="opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-75 transform"
+                                        x-transition:leave-start="opacity-100 scale-100"
+                                        x-transition:leave-end="opacity-0 scale-95"
+                                        class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg">
+                                        <div class="rounded-md bg-white shadow-xs px-4 py-3">
+                                            <div class="flex flex-wrap -mx-2">
+                                                <template x-for="(color, index) in colors" :key="index">
+                                                    <div class="px-2">
+                                                        <template x-if="colorSelected === color">
+                                                            <div class="w-8 h-8 inline-flex rounded-full cursor-pointer border-4 border-white"
+                                                                :style="`background: ${color}; box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);`">
+                                                            </div>
+                                                        </template>
+
+                                                        <template x-if="colorSelected != color">
+                                                            <div @click="colorSelected = color"
+                                                                @keydown.enter="colorSelected = color" role="checkbox"
+                                                                tabindex="0" :aria-checked="colorSelected"
+                                                                class="w-8 h-8 inline-flex rounded-full cursor-pointer border-4 border-white focus:outline-none focus:shadow-outline"
+                                                                :style="`background: ${color};`"></div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="text-white text-md">رنگ بیت ها</span>
+
+                </div>
+                <div class="mt-8 mb-8 space-x-5">
+                    <button id="Genrate"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                        <span class="iconify fill-current w-7 h-7 mr-2"
+                            data-icon="file-icons:graphql-codegenerator"></span>
+                        <span class="text-lg">تولید</span>
+                    </button>
+                    <button id="reset"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                        <span class="iconify fill-current w-7 h-7 mr-2" data-icon="bx:reset"></span>
+                        <span class="text-lg">تازه سازی</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+<script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+<script src="./scripts/jquery-3.6.0.min.js"></script>
+<script src="./scripts/qrcode.min.js"></script>
+<script src="./scripts/scripts.js"></script>
+
+</html>

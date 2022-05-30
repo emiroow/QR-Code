@@ -1,0 +1,7 @@
+.h-fulll {
+    height: 100vh !important;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
